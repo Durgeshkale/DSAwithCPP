@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+// This program finds the largest element in an array of integers.
 
 int main() {
     int n;
