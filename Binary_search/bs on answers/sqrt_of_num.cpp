@@ -27,9 +27,10 @@ int sqrt_of_n(int n){
     int ans = 1;
 
     while(low <= high){
-        int mid =  low + (high - low)/2;
+        long long mid =  low + (high - low)/2;
 
-        if((mid * mid) <= n){
+        long long val = mid * mid;
+        if(val <= n){
             ans = mid;
             low = mid + 1;
         }
