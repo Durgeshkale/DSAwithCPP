@@ -15,21 +15,25 @@ so we use binary search on answers
 using namespace std;
 
 //calculation of x power n
-int fast_power(int mid , int n){
-    int ans  = 1;
+long long fast_power(int mid, int n, int m) {
+    long long ans = 1;
+    long long base = mid;
 
-    while(n > 0){
-        //power is odd
-        if(n % 2 == 1){
-            ans = ans * mid;
+    while (n > 0) {
+        //when the power is odd
+        if (n % 2 == 1) {
+            ans = ans * base;
+            if (ans > m) return ans;
         }
 
-        //square the number
-        mid = mid * mid;
+        //squaring the num
+        base = base * base;
+        if (base > m) base = m + 1LL;
 
-        //divide the power by 2
+        //dividing power by 2
         n = n / 2;
     }
+
     return ans;
 }
 
@@ -40,9 +44,11 @@ int nth_root(int n,  int m){
     while(low <= high){
         int mid = low + (high - low)/2;
 
-        if(fast_power(mid , n) == m) return mid;
+        long long val = fast_power(mid , n, m);
+
+        if(val == m) return mid;
         
-        else if(fast_power(mid , n) < m){
+        else if(val < m){
             low = mid + 1;
         }
         else{
