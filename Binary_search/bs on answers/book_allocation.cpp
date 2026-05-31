@@ -62,7 +62,7 @@ then mid is a possible answer, so we try to minimize it.
 If books need more than k students,
 then mid is too small, so we increase the pages.
 
-Time Complexity: O(n * log(sum - max))
+Time Complexity: O(n * log(sum - max + 1))
 
 Space Complexity: O(1)
 */
@@ -139,3 +139,116 @@ int main() {
 
     return 0;
 }
+
+
+
+
+/*
+Leetcode 410. Split Array Largest Sum 
+is the exact same question as this one
+
+Question:
+Given an integer array nums and an integer k,
+split nums into k non-empty subarrays such that the
+largest sum among the subarrays is minimized.
+
+Return the minimized largest subarray sum.
+
+Example:
+Input:
+nums = [7,2,5,10,8]
+k = 2
+
+Output:
+18
+
+Explanation:
+[7,2,5] and [10,8]
+
+Largest sum = max(14,18) = 18
+This is the minimum possible largest sum.
+
+Time Complexity: O(n * log(sum(nums) - max(nums) + 1))
+
+Space Complexity: O(1)
+
+
+#include <bits/stdc++.h>
+using namespace std;
+// function to find how many subarrays it can be split into for the given maxsum maxi
+int possible_subarr(vector<int>& arr, int maxi) {
+
+    int subarr = 1;
+    int sum = 0;
+
+    for (int i = 0; i < arr.size(); i++) {
+
+        if (sum + arr[i] <= maxi) {
+            sum += arr[i];
+        }
+
+        else {
+            subarr++;
+            sum = arr[i];
+        }
+    }
+
+    return subarr;
+}
+
+int splitArray(vector<int>& nums, int k) {
+
+    int n = nums.size();
+
+    // minimum possible maximum sum
+    int low = *max_element(nums.begin(), nums.end());
+
+    // maximum possible maximum sum
+    int high = accumulate(nums.begin(), nums.end(), 0);
+
+    while (low <= high) {
+
+        int mid = low + (high - low) / 2;
+
+        int subarr = possible_subarr(nums, mid);
+
+        // if it can be split into more than k subarray increase sum
+        if (subarr > k) {
+            low = mid + 1;
+        }
+
+        // if k or less subarrays can be split minimize the sum
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return low;
+}
+
+int main() {
+
+    int n;
+
+    cout << "Enter size of array: ";
+    cin >> n;
+
+    vector<int> nums(n);
+
+    cout << "Enter array elements: ";
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+
+    int k;
+
+    cout << "Enter number of subarrays: ";
+    cin >> k;
+
+    cout << "Minimum possible largest subarray sum: ";
+    cout << splitArray(nums, k);
+
+    return 0;
+}
+
+*/
