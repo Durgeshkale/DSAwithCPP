@@ -1,5 +1,5 @@
 /*
-Leetcode premium problem
+Leetcode premium problem 774
 Question: Minimize Max Distance to Gas Station
 
 We are given positions of existing gas stations in sorted order.
@@ -41,7 +41,7 @@ TC = O(K * N)
 
 This can give TLE.
 
-Optimization:
+Optimization (better solution):
 Instead of searching maximum section manually every time,
 we use a priority queue.
 
@@ -63,10 +63,12 @@ N log N -> pushing initial sections into priority queue
 K log N -> for every new gas station, pop and push operation
 
 Space Complexity: O(N)
-*/
+*/ 
 
 #include <bits/stdc++.h>
 using namespace std;
+
+/* better solution approach
 
 long double minMaxDist(vector<int> &stations, int K) {
 
@@ -102,6 +104,99 @@ long double minMaxDist(vector<int> &stations, int K) {
     return pq.top().first; //returns minimized max distance
 }
 
+
+OPTIMAL SOLUTION:
+Intuition for Optimal Approach:
+In the better solution, we used priority queue.
+But we can optimize space by using Binary Search on Answer.
+
+First we find the range of answer.
+
+Minimum possible distance can be 0.
+Maximum possible distance can be the maximum distance already present
+between two adjacent stations.
+
+Since we have to minimize the maximum distance,
+we will never place a new station outside the given range.
+
+Now we apply binary search on this distance.
+
+Since answer is in decimal, we cannot use normal binary search like:
+low = mid + 1
+high = mid - 1
+
+So we use precision:
+1e-6
+
+We continue binary search while:
+high - low > 1e-6
+
+For every mid distance, we check how many gas stations are required
+so that every section length becomes <= mid.
+
+If required stations > K:
+This distance is too small, so we need to increase distance.
+low = mid
+
+Else:
+This distance is possible, so we try smaller distance.
+high = mid
+
+Time Complexity: O(n * log(maxDistance / 1e-6))
+
+Space Complexity: O(1)
+*/
+
+// Optimal Solution: Binary Search on Answer
+int cntGasStation(long double dist, vector<int>& arr) {
+
+    int cnt = 0;
+
+    for(int i = 1; i < arr.size(); i++) {
+
+        int numInBetween = (arr[i] - arr[i - 1]) / dist;
+
+        if((arr[i] - arr[i - 1]) == numInBetween * dist) {
+            numInBetween--;
+        }
+
+        cnt += numInBetween;
+    }
+
+    return cnt;
+}
+
+long double minMaxDist(vector<int> &stations, int K) {
+
+    int n = stations.size();
+
+    long double low = 0;
+    long double high = 0;
+
+    for(int i = 0; i < n - 1; i++) {
+        high = max(high, (long double)(stations[i + 1] - stations[i]));
+    }
+
+    long double diff = 1e-6;
+
+    while(high - low > diff) {
+
+        long double mid = low + (high - low) / 2.0;
+
+        int cnt = cntGasStation(mid, stations);
+
+        if(cnt > K) {
+            low = mid;
+        }
+
+        else {
+            high = mid;
+        }
+    }
+
+    return high;
+}
+
 int main() {
 
     int n;
@@ -111,7 +206,7 @@ int main() {
     vector<int> stations(n);
 
     cout << "Enter gas station positions: ";
-    for (int i = 0; i < n; i++) {
+    for(int i = 0; i < n; i++) {
         cin >> stations[i];
     }
 
