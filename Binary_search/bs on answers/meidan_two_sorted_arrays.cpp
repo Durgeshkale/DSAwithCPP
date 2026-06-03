@@ -124,9 +124,6 @@ This reduces space from O(n1 + n2) to O(1).
 #include <bits/stdc++.h>
 using namespace std;
 
-#include <bits/stdc++.h>
-using namespace std;
-
 /*
 Better Approach:
 Here we don't create the merged array.
@@ -140,6 +137,7 @@ and store only those two required elements.
 
 This reduces space from O(n1 + n2) to O(1).
 */
+/*
 //better approach
 double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 
@@ -203,6 +201,90 @@ double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
     }
 
     return ((double)ind1el + (double)ind2el) / 2.0;
+}
+
+*/
+
+
+
+/*
+Optimal Approach:
+We need median of two sorted arrays.
+
+Instead of merging both arrays, we divide both arrays into two halves.
+
+Left half should contain:
+(n1 + n2 + 1) / 2 elements
+
+Condition for valid partition:
+l1 <= r2 && l2 <= r1
+
+If this condition is true:
+- all elements on left side are smaller
+- all elements on right side are greater
+
+If total elements are odd:
+median = max(l1, l2)
+
+If total elements are even:
+median = (max(l1, l2) + min(r1, r2)) / 2
+
+We always apply binary search on smaller array.
+Time Complexity: O(log(min(n1, n2)))
+Space Complexity: O(1)
+*/
+
+//optmal approach
+double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+
+    int n1 = nums1.size();
+    int n2 = nums2.size();
+
+    if(n1 > n2) return findMedianSortedArrays(nums2, nums1);
+
+    int n = n1 + n2;
+
+    int low = 0;
+    int high = n1;
+
+    int left = (n1 + n2 + 1) / 2;
+
+    while(low <= high) {
+
+        int mid1 = low + (high - low) / 2;
+        int mid2 = left - mid1;
+
+        int l1 = INT_MIN;
+        int l2 = INT_MIN;
+
+        int r1 = INT_MAX;
+        int r2 = INT_MAX;
+
+        if(mid1 < n1) r1 = nums1[mid1];
+        if(mid2 < n2) r2 = nums2[mid2];
+
+        if(mid1 - 1 >= 0) l1 = nums1[mid1 - 1];
+        if(mid2 - 1 >= 0) l2 = nums2[mid2 - 1];
+
+        if(l1 <= r2 && l2 <= r1) {
+
+            if(n % 2 == 1) {
+                return max(l1, l2); //return median if odd elements
+            }
+
+            return ((double)max(l1, l2) + (double)min(r1, r2)) / 2.0; //returns median when elements are even
+        }
+
+        else if(l1 > r2) {
+            high = mid1 - 1;
+        }
+
+        else {
+            low = mid1 + 1;
+        }
+    }
+
+    return 0;
 }
 
 int main() {
