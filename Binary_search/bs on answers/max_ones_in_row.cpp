@@ -76,7 +76,7 @@ vector<int> rowAndMaximumOnes(vector<vector<int>>& mat) {
     int n = mat[0].size();
 
     int index = -1;
-    int max_cnt = -1;
+    int max_cnt = 0;
 
     for(int i = 0; i < m; i++) {
 
